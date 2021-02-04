@@ -1,4 +1,4 @@
-# Implement a class to hold room information. This should have name and
+# Implement a class to hold rooms_dict information. This should have name and
 # description attributes.
 
 class Room:
