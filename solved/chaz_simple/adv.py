@@ -9,14 +9,6 @@ item_rat = Item("Rate", "This is NOT a bat, there are probably others.")
 item_rope = Item("Rope", "For adventuring")
 item_pole = Item("Pole", "You cannot adventure without a 10 foot pole")
 
-item = {
-    'hat': item_hat,
-    'bat': item_bat,
-    'rat': item_rat,
-    'rope': item_rope,
-    'pole': item_pole
-}
-
 # DECLARE ROOMS
 room_outside = Room(
     "Outside Cave Entrance",
@@ -46,14 +38,6 @@ earlier adventurers. The only exit is to the south.""",
     {item_pole: 1}
 )
 
-rooms_dict = {
-    'outside': room_outside,
-    'foyer': room_foyer,
-    'overlook': room_overlook,
-    'narrow': room_narrow,
-    'treasure': room_treasure
-}
-
 # Link rooms together
 room_outside.branches.update({
     "north": room_foyer,
@@ -78,7 +62,7 @@ if __name__ == '__main__':
 
     # Make a new player object that is currently in the 'outside' rooms_dict.
     name = input("Please input name: ")
-    player = Player(name, rooms_dict['outside'])
+    player = Player(name, room_outside)
 
     # Write a loop that:
     #
