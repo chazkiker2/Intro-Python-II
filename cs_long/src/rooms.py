@@ -53,12 +53,14 @@ class ItemRoom(Location):
         self.items = items if items else []
         super(ItemRoom, self).__init__(x, y)
         extra_str = f"\n{description}\n" if description else ""
-        items_list = "\n\t".join([item.__str__() for item in self.items])
+        items_list = "\t" + "\t".join(item.customize_format(indent="\t") for item in self.items)
         self.string_rep = f"""
 You have entered {name}...{extra_str}
-Looks like there are some items!
-    {items_list}
+Looks like there are some items!{items_list}
 """
+
+    def __str__(self):
+        return self.string_rep
 
     def greet(self):
         print(self.string_rep)

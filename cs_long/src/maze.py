@@ -24,14 +24,18 @@ def seed():
     _maze.clear()
     _maze = {
         (0, 0): rooms.ItemRoom(
-            0,
-            0,
-            "Outside Cave Entrance",
-            "North of you, the cave mount beckons",
-            [items.Sword()]
+            x=0,
+            y=0,
+            name="Outside Cave Entrance",
+            description="North of you, the cave mount beckons",
+            items=[items.Sword(), items.SuperHeavy(), items.RatherHeavy(), items.SlightlyLessHeavy()]
         ),
-        (0, -1): rooms.Room(0, -1, "Foyer", """Dim light filters in from the south. Dusty
-passages run north and east."""),
+        (0, -1): rooms.Room(
+            x=0,
+            y=-1,
+            name="Foyer",
+            description="""Dim light filters in from the south. Dusty passages run north and east."""
+        ),
         (0, -2): rooms.Room(0, -2, "Grand Overlook", """A steep cliff appears before you, falling
 into the darkness. Ahead to the north, a light flickers in
 the distance, but there is no way across the chasm."""),

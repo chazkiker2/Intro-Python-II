@@ -60,7 +60,7 @@ player = Player(player_name, room['outside'])
 # * Prints the current description (the textwrap module might be useful here).
 # * Waits for user input and decides what to do.
 #
-# If the user enters a cardinal direction, attempt to move to the rooms_dict there.
+# If the user enters a cardinal direction, attempt to _move to the rooms_dict there.
 # Print an error message if the movement isn't allowed.
 #
 # If the user enters "q", quit the game.
@@ -131,7 +131,7 @@ while player_input != 'q':
     # Player chooses to take or leave item using function above
     inv_items(take_item)
 
-    # Prompt player to move to a new location
+    # Prompt player to _move to a new location
     player_input = input('''
     Where would you like to go now?
     Type "n" for North, "s" for South, "e" for East, "w" for West, or "q" for quit: ''')
