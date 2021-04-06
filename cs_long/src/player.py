@@ -7,18 +7,18 @@ import utils
 
 
 class Player:
-    def __init__(self, maze):
-        self.maze = maze
+    def __init__(self, location):
+        self.location = location
         self.inventory = [items.Coin(20)]
         self.hp = 100
         self.equipped_weapon = items.Fists()
-        self.x_coordinate, self.y_coordinate = (0, 0)
         self.capacity = 50
         self.has_won = False
         self.max_capacity = 50
 
     def __str__(self):
         formatted_items = "\n\t".join(str(item) for item in self.inventory) if self.inventory else "No items!"
+        # Coordinates: (x={self.x_coordinate}, y={self.y_coordinate})
         return f"""
         Player-------------------
             HP: {self.hp}
@@ -27,7 +27,7 @@ class Player:
             
             Equipped Weapon: {self.equipped_weapon}
             
-            Coordinates: (x={self.x_coordinate}, y={self.y_coordinate})
+            Location: {self.location.name}
             
             Inventory:
                 {formatted_items}
@@ -51,9 +51,9 @@ Inventory: {items_list}
         print(string_repr)
 
     def _move(self, dx, dy):
-        self.x_coordinate += dx
-        self.y_coordinate += dy
-        self.maze.get_room_at((self.x_coordinate, self.y_coordinate)).greet()
+        x, y = self.location.coords
+        self.location = self.location.room_to((x + dx, y + dy))
+        self.location.greet()
 
     def move_north(self):
         self._move(dx=0, dy=-1)

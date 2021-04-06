@@ -19,9 +19,6 @@ class Maze:
     def get_room_at(self, coords):
         return self.maze.get(coords)
 
-    def get_location_if_exists(self, x, y):
-        return self.maze.get((x, y))
-
     def get_adjacent_rooms(self, coords):
         x, y = coords
         moves = []
@@ -47,7 +44,7 @@ class Maze:
             ),
             (0, -1): rooms.Room(
                 maze=self,
-                coords=(0, 1),
+                coords=(0, -1),
                 name="Foyer",
                 description="""Dim light filters in from the south. Dusty passages run north and east."""
             ),
