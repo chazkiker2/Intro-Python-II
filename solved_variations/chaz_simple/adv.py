@@ -87,7 +87,7 @@ if __name__ == '__main__':
         # * Waits for user input and decides what to do.
         direction = input("What do you do? \nOPTIONS: [n, s, e, w, (a)ction] ").lower()
 
-        # If the user enters a cardinal direction, attempt to move to the rooms_dict there.
+        # If the user enters a cardinal direction, attempt to _move to the rooms_dict there.
         if direction in ["n", "s", "e", "w", "q", "a"]:
             if direction == "n":
                 # Update current rooms_dict to northern rooms_dict
@@ -137,9 +137,9 @@ if __name__ == '__main__':
                 print(f"There is nowhere for {player.name} to go.")
             elif cur_room == player.current_room:
                 # If current rooms_dict has not updated, print a message
-                print("Think about your next move...")
+                print("Think about your next _move...")
             else:
-                # If current rooms_dict available to update, update rooms_dict and move on
+                # If current rooms_dict available to update, update rooms_dict and _move on
                 print(f"{player.name} moves with vigor to {cur_room.name}")
                 player.current_room = cur_room
 
