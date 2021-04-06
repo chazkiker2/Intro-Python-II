@@ -1,6 +1,6 @@
 from random import choice
 from typing import List
-
+from directions import Direction
 import actions
 import items
 import utils
@@ -18,7 +18,6 @@ class Player:
 
     def __str__(self):
         formatted_items = "\n\t".join(str(item) for item in self.inventory) if self.inventory else "No items!"
-        # Coordinates: (x={self.x_coordinate}, y={self.y_coordinate})
         return f"""
         Player-------------------
             HP: {self.hp}
@@ -50,22 +49,35 @@ Inventory: {items_list}
 """
         print(string_repr)
 
+    def _move_to(self, direction):
+        to_travel = self.location.branches[direction]
+        if to_travel:
+            self.location = to_travel
+            self.location.greet()
+        else:
+            # we shouldn't ever get here, but just in case
+            print("Whoops! That's a wall")
+
     def _move(self, dx, dy):
         x, y = self.location.coords
         self.location = self.location.room_to((x + dx, y + dy))
         self.location.greet()
 
     def move_north(self):
-        self._move(dx=0, dy=-1)
+        # self._move(dx=0, dy=-1)
+        self._move_to(Direction.NORTH)
 
     def move_south(self):
-        self._move(dx=0, dy=1)
+        # self._move(dx=0, dy=1)
+        self._move_to(Direction.SOUTH)
 
     def move_east(self):
-        self._move(dx=1, dy=0)
+        # self._move(dx=1, dy=0)
+        self._move_to(Direction.EAST)
 
     def move_west(self):
-        self._move(dx=-1, dy=0)
+        # self._move(dx=-1, dy=0)
+        self._move_to(Direction.WEST)
 
     def equip_weapon(self, weapon_name):
         for item in self.inventory:

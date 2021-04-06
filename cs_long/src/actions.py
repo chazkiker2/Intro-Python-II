@@ -1,4 +1,5 @@
 from player import Player
+from directions import Direction
 
 
 class Action:
@@ -49,6 +50,7 @@ class SideEffect(Action):
 
     def invoke(self):
         self.side_effect(**self.kwargs)
+
 
 class MoveNorth(Action):
     def __init__(self):
@@ -108,3 +110,12 @@ class Flee(Action):
 class Exit(Action):
     def __init__(self):
         super().__init__(method=Player.exit_game, name="Exit/Quit", valid_input=["x", "exit", "q", "quit"])
+
+
+NORTH, EAST, SOUTH, WEST = Direction
+directionActions = {
+    NORTH: MoveNorth,
+    EAST: MoveEast,
+    SOUTH: MoveSouth,
+    WEST: MoveWest
+}

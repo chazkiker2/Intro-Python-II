@@ -1,9 +1,11 @@
 from maze import Maze
+from directions import Direction
 from player import Player
 from utils import prompt_and_respond
 
 
 def main():
+
     maze = Maze()
     maze.seed()
     player = Player(maze.get_room_at((0,0)))

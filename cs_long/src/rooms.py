@@ -1,10 +1,19 @@
 import actions
+from directions import Direction
+
+NORTH, EAST, SOUTH, WEST = Direction
 
 
 class Location:
     def __init__(self, maze, coords):
         self.maze = maze
         self.coords = coords
+        self.branches = {
+            NORTH: None,
+            EAST: None,
+            SOUTH: None,
+            WEST: None,
+        }
 
     def room_to(self, coords):
         return self.maze.get_room_at(coords)
@@ -15,8 +24,24 @@ class Location:
     def on_player_enter(self, a_player):
         raise NotImplementedError()
 
+    def get_adjacent_rooms(self):
+        moves = []
+        for cardinal_direction, branch in self.branches.items():
+            if branch:
+                moves.append(actions.directionActions[cardinal_direction]())
+        return moves
+
+        # if self.branches[NORTH]:
+        #     moves.append(actions.MoveNorth())
+        # if self.branches[EAST]:
+        #     moves.append(actions.MoveEast())
+        # if self.branches[SOUTH]:
+        #     moves.append(actions.MoveSouth())
+        # if self.branches[WEST]:
+        #     moves.append()
+
     def available_actions(self):
-        moves = self.maze.get_adjacent_rooms(self.coords)
+        moves = self.get_adjacent_rooms()
         moves.append(actions.Exit())
         moves.append(actions.ViewInventory())
         return moves
