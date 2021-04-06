@@ -16,11 +16,11 @@ class Location:
         }
 
         if isinstance(items, dict):
-            self.items = dict
+            self.items = items
         else:
             try:
                 self.items = Counter(list(items))
-            except Exception:
+            except TypeError:
                 self.items = {}
 
     def on_item_taken(self, item):
