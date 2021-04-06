@@ -1,11 +1,10 @@
-import maze
 import actions
 
 
 class Location:
-    def __init__(self, x, y):
-        self.x = x
-        self.y = y
+    def __init__(self, maze, coords):
+        self.maze = maze
+        self.coords = coords
 
     def greet(self):
         raise NotImplementedError()
@@ -13,29 +12,16 @@ class Location:
     def on_player_enter(self, a_player):
         raise NotImplementedError()
 
-    def available_directions(self):
-        moves = []
-        x, y = self.x, self.y
-        if maze.get_location_if_valid(x, y - 1):
-            moves.append(actions.MoveNorth())
-        if maze.get_location_if_valid(x, y + 1):
-            moves.append(actions.MoveSouth())
-        if maze.get_location_if_valid(x + 1, y):
-            moves.append(actions.MoveEast())
-        if maze.get_location_if_valid(x - 1, y):
-            moves.append(actions.MoveWest())
-        return moves
-
     def available_actions(self):
-        moves = self.available_directions()
+        moves = self.maze.get_adjacent_rooms(self.coords)
         moves.append(actions.Exit())
         moves.append(actions.ViewInventory())
         return moves
 
 
 class Room(Location):
-    def __init__(self, x, y, name, description):
-        super(Room, self).__init__(x, y)
+    def __init__(self, maze, coords, name, description):
+        super(Room, self).__init__(maze, coords)
         self.string_rep = f"""
 You've entered {name}...
 {description}
@@ -49,9 +35,9 @@ You've entered {name}...
 
 
 class ItemRoom(Location):
-    def __init__(self, x, y, name, description=None, items=None):
+    def __init__(self, maze, coords, name, description=None, items=None):
+        super(ItemRoom, self).__init__(maze, coords)
         self.items = items if items else []
-        super(ItemRoom, self).__init__(x, y)
         extra_str = f"\n{description}\n" if description else ""
         items_list = "\t" + "\t".join(item.customize_format(indent="\t") for item in self.items)
         self.string_rep = f"""

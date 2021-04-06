@@ -2,37 +2,36 @@ from random import choice
 from typing import List
 
 import actions
-import maze
 import items
 import utils
 
 
 class Player:
-    def __init__(self):
+    def __init__(self, maze):
+        self.maze = maze
         self.inventory = [items.Coin(20)]
         self.hp = 100
         self.equipped_weapon = items.Fists()
-        self.x_coordinate, self.y_coordinate = maze.starting_coordinates
+        self.x_coordinate, self.y_coordinate = (0, 0)
         self.capacity = 50
         self.has_won = False
         self.max_capacity = 50
 
     def __str__(self):
         formatted_items = "\n\t".join(str(item) for item in self.inventory) if self.inventory else "No items!"
-
         return f"""
-Player-------------------
-    HP: {self.hp}
-    
-    Capacity: {self.capacity}
-    
-    Equipped Weapon: {self.equipped_weapon}
-    
-    Coordinates: (x={self.x_coordinate}, y={self.y_coordinate})
-    
-    Inventory:
-        {formatted_items}
-"""
+        Player-------------------
+            HP: {self.hp}
+            
+            Capacity: {self.capacity}
+            
+            Equipped Weapon: {self.equipped_weapon}
+            
+            Coordinates: (x={self.x_coordinate}, y={self.y_coordinate})
+            
+            Inventory:
+                {formatted_items}
+        """
 
     def is_alive(self):
         return self.hp > 0
@@ -54,7 +53,7 @@ Inventory: {items_list}
     def _move(self, dx, dy):
         self.x_coordinate += dx
         self.y_coordinate += dy
-        maze.get_location_if_valid(self.x_coordinate, self.y_coordinate).greet()
+        self.maze.get_room_at((self.x_coordinate, self.y_coordinate)).greet()
 
     def move_north(self):
         self._move(dx=0, dy=-1)
