@@ -48,8 +48,8 @@ class SideEffect(Action):
     def __str__(self):
         return f"{self.side_effect.__name__}"
 
-    def invoke(self):
-        self.side_effect(**self.kwargs)
+    def __call__(self, *args, **kwargs):
+        self.side_effect(**kwargs, **self.kwargs)
 
 
 class MoveNorth(Action):
@@ -102,9 +102,9 @@ class Attack(Action):
         super().__init__(method=Player.attack, name="Attack", valid_input=["a", "attack"], enemy=enemy)
 
 
-class Flee(Action):
+class Run(Action):
     def __init__(self, tile):
-        super().__init__(method=Player.flee, name="Flee", valid_input=["f", "flee", "fuck"], tile=tile)
+        super().__init__(method=Player.run, name="Run", valid_input=["r", "run"])
 
 
 class Exit(Action):

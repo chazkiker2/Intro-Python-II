@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, List
 import actions
 
 valid_yes = ["y", "yes", "yup"]
@@ -19,7 +19,7 @@ def yes_or_no(prompt):
 
 def prompt_and_respond(
         player,
-        available_actions,
+        available_actions: List,
         title_prompt: Optional[str] = None,
         action_prompt: Optional[str] = None
 ):
@@ -36,8 +36,7 @@ def prompt_and_respond(
     for action in available_actions:
         if action.match_input(user_input=action_input):
             if isinstance(action, actions.SideEffect):
-                print("this is a side effect")
-                action.invoke()
+                action()
                 break
             else:
                 player.do_action(action, **action.kwargs)

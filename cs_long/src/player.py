@@ -9,9 +9,11 @@ import utils
 class Player:
     def __init__(self, location):
         self.location = location
-        self.inventory = [items.Coin(20)]
         self.hp = 100
         self.equipped_weapon = items.Fists()
+        self.inventory = {
+            items.Coin(20): 1,
+        }
         self.capacity = 50
         self.has_won = False
         self.max_capacity = 50
@@ -50,6 +52,7 @@ Inventory: {items_list}
         print(string_repr)
 
     def _move_to(self, direction):
+        """internally used to move from this room to a separate branch"""
         to_travel = self.location.branches[direction]
         if to_travel:
             self.location = to_travel
@@ -58,25 +61,16 @@ Inventory: {items_list}
             # we shouldn't ever get here, but just in case
             print("Whoops! That's a wall")
 
-    def _move(self, dx, dy):
-        x, y = self.location.coords
-        self.location = self.location.room_to((x + dx, y + dy))
-        self.location.greet()
-
     def move_north(self):
-        # self._move(dx=0, dy=-1)
         self._move_to(Direction.NORTH)
 
     def move_south(self):
-        # self._move(dx=0, dy=1)
         self._move_to(Direction.SOUTH)
 
     def move_east(self):
-        # self._move(dx=1, dy=0)
         self._move_to(Direction.EAST)
 
     def move_west(self):
-        # self._move(dx=-1, dy=0)
         self._move_to(Direction.WEST)
 
     def equip_weapon(self, weapon_name):
@@ -85,20 +79,26 @@ Inventory: {items_list}
                 self.equipped_weapon = item
 
     def drop_item(self, item):
-        # dropping an item will allow us MORE capacity
+        """drops an item from player inventory into current location"""
         self.capacity += item.weight
-        self.inventory.remove(item)
+        self.inventory[item] -= 1
+        if not self.inventory[item]:
+            del self.inventory[item]
+
+        self.location.on_item_dropped(item)
 
     def _drop_item(self, item):
         still_dropping = True
+
+        def stop_dropping():
+            """used as side-effect to allow user to cancel this process"""
+            nonlocal still_dropping
+            still_dropping = False
+
         while item.weight > self.capacity and still_dropping:
             name_weight_list = "\n\t" + "\n\t".join(
                 f"item name: {item.name} --- weight: {item.weight}" for item in self.inventory)
             print(name_weight_list)
-
-            def stop_dropping():
-                nonlocal still_dropping
-                still_dropping = False
 
             drop_title_prompt = "type 'drop item_name' to drop the item with the given name " \
                                 "(i.e., 'drop sword' would drop the sword)"
@@ -170,27 +170,27 @@ Inventory: {items_list}
             else:
                 self._drop_item(item)
 
+        self.location.on_item_taken(item)
         self.capacity -= item.weight
-        self.inventory.append(item)
+        if item not in self.inventory:
+            self.inventory[item] = 0
+
+        self.inventory[item] += 1
 
         # if the item itself is a weapon, maybe they want to swap their equipped weapon out
         if isinstance(item, items.Weapon):
             self._swap_equipped_weapon(item)
 
     def attack(self, enemy):
-        print(f"You use {self.equipped_weapon.name} against {enemy.name}!")
+        print(f"You hit {enemy.name} with {self.equipped_weapon.name}")
         enemy.hp -= self.equipped_weapon.damage
         if not enemy.is_alive():
             print(f"You killed {enemy.name}!")
         else:
             print(f"{enemy.name} HP is {enemy.hp}.")
 
-    def flee(self, room):
-        """Moves the player randomly to an adjacent room"""
-
-        available_moves = room.adjacent_moves()
-        chosen_action = choice(available_moves)
-        self.do_action(chosen_action)
+    def run(self):
+        self.do_action(choice(self.location.get_adjacent_rooms()))
 
     @staticmethod
     def exit_game():

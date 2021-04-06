@@ -49,7 +49,6 @@ class Weapon(Item):
 
     def __str__(self):
         extra = f"Damage: {self.damage}"
-        print(f"in weapon: {extra}")
         return super().customize_format(extra=extra)
 
 
@@ -75,9 +74,9 @@ class Sword(Weapon):
         )
 
     def customize_format(self, indent=None, line_break=None, extra=None):
-        indent = "" if indent is None else indent
-        line_break = "" if line_break is None else line_break
-        extra = "" if extra is None else extra
+        indent = indent if indent else ""
+        line_break = line_break if line_break else ""
+        extra = extra if extra else ""
         extra_ = f"\n{indent * 2}Damage: {self.damage}{extra}"
         return super()._customize_format(
             indent=indent,
@@ -96,6 +95,7 @@ class Coin(Item):
         )
 
 
+# for testing
 class Heavy(Item):
     def __init__(self, weight, name=None):
         name_to_use = name if name else "A heavy item"
@@ -107,6 +107,7 @@ class Heavy(Item):
         )
 
 
+# for testing
 class SuperHeavy(Heavy):
     def __init__(self):
         super().__init__(
@@ -115,11 +116,13 @@ class SuperHeavy(Heavy):
         )
 
 
+# for testing
 class RatherHeavy(Heavy):
     def __init__(self):
         super().__init__(weight=35, name="rather_heavy")
 
 
+# for testing
 class SlightlyLessHeavy(Heavy):
     def __init__(self):
         super().__init__(weight=30, name="slightly_heavy")

@@ -1,3 +1,5 @@
+from collections import Counter
+
 import actions
 from directions import Direction
 
@@ -5,9 +7,7 @@ NORTH, EAST, SOUTH, WEST = Direction
 
 
 class Location:
-    def __init__(self, maze, coords):
-        self.maze = maze
-        self.coords = coords
+    def __init__(self, items=None):
         self.branches = {
             NORTH: None,
             EAST: None,
@@ -15,8 +15,23 @@ class Location:
             WEST: None,
         }
 
-    def room_to(self, coords):
-        return self.maze.get_room_at(coords)
+        if isinstance(items, dict):
+            self.items = dict
+        else:
+            try:
+                self.items = Counter(list(items))
+            except Exception:
+                self.items = {}
+
+    def on_item_taken(self, item):
+        self.items[item] -= 1
+        if not self.items[item]:
+            del self.items[item]
+
+    def on_item_dropped(self, item, count=1):
+        if item not in self.items:
+            self.items[item] = 0
+        self.items[item] += count
 
     def greet(self):
         raise NotImplementedError()
@@ -25,70 +40,38 @@ class Location:
         raise NotImplementedError()
 
     def get_adjacent_rooms(self):
-        moves = []
-        for cardinal_direction, branch in self.branches.items():
-            if branch:
-                moves.append(actions.directionActions[cardinal_direction]())
-        return moves
-
-        # if self.branches[NORTH]:
-        #     moves.append(actions.MoveNorth())
-        # if self.branches[EAST]:
-        #     moves.append(actions.MoveEast())
-        # if self.branches[SOUTH]:
-        #     moves.append(actions.MoveSouth())
-        # if self.branches[WEST]:
-        #     moves.append()
+        return [
+            actions.directionActions[cardinal_direction]()
+            for cardinal_direction, branch in self.branches.items()
+            if branch
+        ]
 
     def available_actions(self):
-        moves = self.get_adjacent_rooms()
-        moves.append(actions.Exit())
-        moves.append(actions.ViewInventory())
+        moves = self.get_adjacent_rooms() + [actions.Exit(), actions.ViewInventory()]
+        if self.items:
+            moves += [actions.TakeItem(item) for item in self.items]
         return moves
 
 
 class Room(Location):
-    def __init__(self, maze, coords, name, description):
-        super(Room, self).__init__(maze, coords)
+    def __init__(self, name, description=None, items=None):
+        super(Room, self).__init__(items=items)
         self.name = name
-        self.string_rep = f"""
-You've entered {name}...
-{description}
-"""
-
-    def greet(self):
-        print(self.string_rep)
-
-    def on_player_enter(self, a_player):
-        pass
-
-    def __repr__(self):
-        return f"Room({self.name}, {self.coords})"
-
-
-class ItemRoom(Location):
-    def __init__(self, maze, coords, name, description=None, items=None):
-        super(ItemRoom, self).__init__(maze, coords)
-        self.name = name
-        self.items = items if items else []
-        extra_str = f"\n{description}\n" if description else ""
-        items_list = "\t" + "\t".join(item.customize_format(indent="\t") for item in self.items)
-        self.string_rep = f"""
-You have entered {name}...{extra_str}
-Looks like there are some items!{items_list}
-"""
+        self.description = description if description else "No description given"
 
     def __str__(self):
-        return self.string_rep
-
-    def __repr__(self):
-        return f"ItemRoom({self.name}, {self.coords})"
+        str_rep = f"You've entered {self.name}\n" \
+                  f"{self.description}"
+        if self.items:
+            str_rep += "\n\tLooks like there are some items!"
+            str_rep += "\t" + "\t".join(item.customize_format(indent="\t") for item in self.items)
+        return str_rep
 
     def greet(self):
-        print(self.string_rep)
+        print(self)
 
     def on_player_enter(self, a_player):
         pass
 
-    def available_actions(self):
-        return super(ItemRoom, self).available_actions() + [actions.TakeItem(item) for item in self.items]
+    def __repr__(self):
+        return f"Room({self.name})"
